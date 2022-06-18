@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import InstructorRoute from "../../components/routes/InstructorRoute";
-import { Avatar } from "antd";
+import { Avatar, Tooltip } from "antd";
 import Link from "next/link";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 
@@ -25,7 +25,7 @@ const InstructorIndex = () => {
             {/* <pre>{JSON.stringify(courses, null, 4)}</pre> */}
             {courses && courses.map((course) => (
                 <>
-                    <div className="media pt-2">
+                    <div className="media pt-2" key={course._id}>
                         <div className="media-body">
                             <div className="row">
                                 <div className="col-md-2">
@@ -46,7 +46,7 @@ const InstructorIndex = () => {
                                     }
                                 </div>
                                 <div className="col-md-1">
-                                    {course.published ? (<div><CheckCircleOutlined className="h5 pointer text-success" /></div>) : (<div><CloseCircleOutlined className="h5 pointer text-warning" /></div>)}
+                                    {course.published ? (<Tooltip title="Published"><CheckCircleOutlined className="h5 pointer text-success" /></Tooltip>) : (<Tooltip title="Unpublished"><CloseCircleOutlined className="h5 pointer text-warning" /></Tooltip>)}
                                 </div>
                             </div>
                         </div>

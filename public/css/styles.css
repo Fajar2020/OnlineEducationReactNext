@@ -2,3 +2,11 @@
     background-image: linear-gradient(to right, #007bff, #000);
     color: #fff;
 }
+
+.width-full {
+    width: 100%;
+}
+
+.pointer {
+    cursor: pointer;
+}

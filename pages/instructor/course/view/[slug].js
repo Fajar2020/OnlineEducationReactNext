@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import InstructorRoute from '../../../../components/routes/InstructorRoute';
 import axios from 'axios';
 import { Avatar, Tooltip, Button, Modal, List } from 'antd';
-import { CheckOutlined, DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons';
+import { CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined, QuestionOutlined, UploadOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown'
 import LessonForm from '../../../../components/forms/LessonForm';
 import { toast } from 'react-toastify';
@@ -28,14 +28,13 @@ const CourseView = () => {
         free_preview: false
     });
     
-    
     useEffect(() => {
         loadCourse()
     }, [slug])
 
     const loadCourse = async () => {
-        const {data} = await axios.get(`/api/course/${slug}`);
-        if (data) setCourse(data);
+        const {data} = await axios.get(`/api/course/read/${slug}`);
+        setCourse(data);
     }
 
     const handleAddLesson = async (e) => {
@@ -139,14 +138,36 @@ const CourseView = () => {
         }
     }
 
+    const handlePublish = async (e, courseId) => {
+        try {
+            let answer = window.confirm('Are you sure you want to publish your course?')
+            if (!answer) return;
+            const {data} = await axios.put(`/api/course/publish/${courseId}`)
+            setCourse(data);
+            toast("Congratulations !!!")
+        } catch (error) {
+            toast("Fail to publish, please try again")
+        }
+        
+    };
+
+    const handleUnpublish = async (e, courseId) => {
+        try {
+            let answer = window.confirm('Once we unpublished the course user can\'t enroll to the course')
+            if (!answer) return;
+            const {data} = await axios.put(`/api/course/unpublish/${courseId}`)
+            setCourse(data);
+            toast("Successfully unpublish course")
+        } catch (error) {
+            toast("Fail to unpublish, please try again")
+        }
+    };
+
     return (
         <InstructorRoute>
             <div className='container pt-3'>
                 {course && (
                     <div className='container-fluid-pt-1'>
-                        {/* <pre>
-                            {JSON.stringify(course, null, 4)}
-                        </pre> */}
                         <div className='media pt-2'>
                             <div className='media-body ps-2'>
                                 <div className='row'>
@@ -167,12 +188,22 @@ const CourseView = () => {
                                     </div>
                                     <div className='col-md-2'>
                                         <div className='mt-4'>
+                                            <Tooltip title={course.totalUsers + " Enrolled"}>
+                                                <UserSwitchOutlined className='h5 pointer text-info me-4'/>
+                                            </Tooltip>
+
                                             <Tooltip title="Edit">
                                                 <EditOutlined className='h5 pointer text-warning me-4' onClick={()=>router.push(`/instructor/course/edit/${slug}`)}/>
                                             </Tooltip>
-                                            <Tooltip title="Publish">
-                                                <CheckOutlined className='h5 pointer text-danger' />
-                                            </Tooltip>
+
+                                            {course.lessons && course.lessons.length < 5 ? 
+                                            <Tooltip title="Min 5 lessons">
+                                                <QuestionOutlined className='h5 pointer text-danger' />
+                                            </Tooltip> : course.published ? <Tooltip title="Unpublish">
+                                                <CloseOutlined onClick={e => handleUnpublish(e, course._id)} className='h5 pointer text-danger' />
+                                            </Tooltip> : <Tooltip title="Publish">
+                                                <CheckOutlined onClick={e => handlePublish(e, course._id)} className='h5 pointer text-success' />
+                                            </Tooltip>}
                                         </div>
                                     </div>
                                 </div>

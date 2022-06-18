@@ -1,10 +1,27 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import CourseCard from "../components/cards/CourseCard";
+import { useEffect, useState } from "react";
+import CourseCard from "../../../components/cards/CourseCard";
 
-const Index = ({courses}) => {
+const SearchCourse = () => {
     const router = useRouter();
+    const {title} = router.query;
+
+    const [courses, setCourses] = useState([]);
+
+    useEffect(()=> {
+        loadCourses();
+    }, [title]);
+
+    const loadCourses = async () => {
+        try {
+            const {data} = await axios.get(`/api/course?title=${title}`);
+            setCourses(data);
+        } catch (error) {
+            toast('fail to load courses')
+        }
+    }
+
     const [search, setSearch] = useState('');
     
     const handleChange = (e) => {
@@ -15,6 +32,7 @@ const Index = ({courses}) => {
         e.preventDefault();
         router.push(`/course/search/${search}`);
     }
+
     return (
         <>
             <div className="mt-0 p-5 jumbotron">
@@ -47,16 +65,7 @@ const Index = ({courses}) => {
                 </div>
             </div>
         </>
-    )
+    );
 }
 
-export async function getServerSideProps() {
-    const { data } = await axios.get(`${process.env.API}/course`);
-    return {
-        props: {
-            courses: data
-        }
-    }
-}
-
-export default Index;
+export default SearchCourse;

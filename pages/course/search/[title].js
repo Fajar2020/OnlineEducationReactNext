@@ -2,11 +2,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CourseCard from "../../../components/cards/CourseCard";
+import CourseList from "../../../components/cards/CourseList";
 
 const SearchCourse = () => {
     const router = useRouter();
     const {title} = router.query;
-
     const [courses, setCourses] = useState([]);
 
     useEffect(()=> {
@@ -35,35 +35,12 @@ const SearchCourse = () => {
 
     return (
         <>
-            <div className="mt-0 p-5 jumbotron">
-                <h1 className="text-white">Online School</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="row">
-                    
-                        <div className="col">
-                            <div className="form-group">
-                                <input 
-                                    type="text" 
-                                    name="search" 
-                                    value={search} 
-                                    onChange={handleChange}
-                                    className="form-control"
-                                    placeholder="search"
-                                />
-                            </div>
-                        </div>
-                    
-                    </div>
-                </form>
-            </div>
-            <div className="container-fluid">
-                <div className="row">
-                    {courses.map( course => (<div key={course._id} className="col-md-4">
-                            <CourseCard course={course} />
-                        </div>)
-                    )}
-                </div>
-            </div>
+            <CourseList 
+                search = {search}
+                handleChange = {handleChange}
+                handleSubmit = {handleSubmit}
+                courses = {courses}
+            />
         </>
     );
 }

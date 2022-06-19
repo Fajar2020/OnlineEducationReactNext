@@ -1,11 +1,21 @@
+import { useState } from "react";
 import CourseCard from "./CourseCard";
 
 const CourseList = ({
-    search,
-    handleChange,
-    handleSubmit,
+    router,
     courses
 }) => {
+    const [search, setSearch] = useState('');
+    
+    const handleChange = (e) => {
+        setSearch(e.target.value);
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        router.push(`/course/search/${search}`);
+    }
+
     return (
         <>
             <div className="mt-0 p-5 jumbotron">
